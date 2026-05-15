@@ -1,8 +1,8 @@
 
 # Features should be added in future:
 """
-1). design.show_designes()   # Shows designes you can use just now without making your own ones
-2). design.set_default()   # Constructor where you can make/choose designes for different classes or establish a built-in design pack
+1). Design.show_designs()   # Shows designs you can use just now without making your own ones
+2). Design.set_default()   # Constructor where you can make/choose designs for different classes or establish a built-in design pack
 """
 
 
@@ -34,18 +34,18 @@ class DesignError(Exception):
 
 
 
-class nolimits:
+class NoLimits:
     2 + 2 == 4
 
-class auto:
+class Auto:
     2 + 2 == 4
 
 
 
 display_for_simple_panels = None
 display_size = None
-nolimits = nolimits()
-auto = auto()
+nolimits = NoLimits()
+Auto = Auto()
 
 
 def is_in(point: tuple[int, int] | list[int, int], area: tuple[int, int, int, int] | list[int, int, int, int]) -> bool:   # Checks is a point in some area
@@ -73,26 +73,26 @@ def select_display(*display):
 
 
 
-class nummer:   # The panel fixed on a some place that shows some text when user interacts with some simple_panels object
+class Nummer:   # The panel fixed on a some place that shows some text when user interacts with some simple_panels object
     exist = False
     coordinates = None   # Top-left point
     width = None   # The same value for width along x and for width along y
     font = None
 
     @classmethod
-    def set(cls, coordinates: tuple | list, width: Union[int, auto], design):
+    def set(cls, coordinates: tuple | list, width: Union[int, Auto], design):
         if not display_size:
             raise DisplayError('Display wasn\'t detected')
         if not isinstance(coordinates, (tuple, list)):
             raise TypeError(f'The {type(coordinates)} type had passed, but a tuple or list expected')
-        if isinstance(width, (int, auto)):
+        if isinstance(width, (int, Auto)):
             raise TypeError(f'The {type(width)} type had passed, but int was expected')
         if len(coordinates) != 2:
             raise ValueError(f'{len(coordinates)} arguments had passed, but 2 ones (x, y) was expected')
         for i in range(2):
             if not isinstance(coordinates[i], int):
                 raise TypeError(f'The {type(coordinates[i])} type was passed for {i} position in the coordinates, but int was expected')
-        if isinstance(width, auto):
+        if isinstance(width, Auto):
             if display_size[0] - coordinates[0] < 15 or display_size[1] - coordinates[1] < 15:
                 raise ValueError(f'The width of a nummer can\'t be smaller that 15. The coordinatates passed don\'t fit within the remaining space up to the boundaries of the display')
             else:
@@ -103,8 +103,8 @@ class nummer:   # The panel fixed on a some place that shows some text when user
         else:
             if width < 15:
                 raise ValueError(f'{width} is too small value. You can only use 15 and bigger')
-        if not (type(design).__qualname__.split('.')[0] == 'design'):
-            raise TypeError(f'The design type was expected, but {type(design)} had passed')   # These is a design type for every class of interactive object but all of them located in the design class
+        if not (type(design).__qualname__.split('.')[0] == 'Design'):
+            raise TypeError(f'The design type was expected, but {type(design)} had passed')   # These is a design type for every class of interactive object but all of them located in the Design class
         elif len(type(design).__qualname__.split('.')) == 1:
             raise TypeError('You have passed the design class, but it\'s must be a class object')
         elif len(type(design).__qualname__.split('.')) > 2:
@@ -131,26 +131,26 @@ class nummer:   # The panel fixed on a some place that shows some text when user
             
 
 
-class design:   # The general class containing designes for all types of intecactive objects. Exists only for containing different types of designes, it's planned that a user thinks only one class for design exists
-    # The different design classes creates via @classmethod functions for a user, not via constructors
+class Design:   # The general class containing designs for all types of interactive objects. Exists only for containing different types of designs, it's planned that a user thinks only one class for design exists
+    # The different design classes are created via @classmethod functions for a user, not via constructors
     
     @classmethod
     def slider(cls, inside_color: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), separators_exist: tuple[int, int, int] | list[int, int, int] = None, notes_exist: bool = None, /):
-        return design.SliderDesign(inside_color, edges_color, separators_exist, notes_exist)
+        return Design.SliderDesign(inside_color, edges_color, separators_exist, notes_exist)
     
     @classmethod
     def nummer(cls, border_radius: int = 0, inside_color: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), font_color: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), font_size: int = 16, font_type: str = 'centurygothic'):
-        return design.NummerDesign(border_radius, inside_color, edges_color, font_color, font_size, font_type)
+        return Design.NummerDesign(border_radius, inside_color, edges_color, font_color, font_size, font_type)
     
     @classmethod
     def button(cls, text, border_radius: int = 0, color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_when_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_when_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_in_ticks: int = 0):
-        return design.ButtonDesign(text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks)
+        return Design.ButtonDesign(text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks)
 
-    def show_designes(cls):   # Must show all available built-in designes as a tuple
+    def show_designs(cls):   # Must show all available built-in designs as a tuple
         pass
     
     def set_default(cls, design_kit, for_objects = None):   # Sets the defaul design kits for types of objects (Buttons, sliders, etc.) from this for_objects. Design kit is a set of designes designed for every type of interactive object in simple_panels or at least for that types of interactive objects noted in for_objects. A kit of design can be chosen fromin ones and can be creates as a now one from custom designes
-        pass                                                # defauld designes should be substitited automatically when specified that design=simple_panels.auto or design=simple_panels_default (needed to choose is needed the new magic number in simple_panels)
+        pass                                                # defauld designes should be substitited Automatically when specified that design=simple_panels.Auto or design=simple_panels_default (needed to choose is needed the new magic number in simple_panels)
     
     class SliderDesign:
         def __init__(self, inside_color: tuple[int, int, int] | list[int, int, int], edges_color, separators_exist, notes_exist):
@@ -332,7 +332,7 @@ class RelateSlider:   # The type of slider in which the value it represents vary
             if live_level > k_steps or live_level < 0:
                 raise ValueError(f'Had passed the impossible live_level. It\'s the {live_level}, but a one from 0 to {k_steps} was expected')
 
-        if not (type(design).__qualname__.split('.')[0] == 'design'):
+        if not (type(design).__qualname__.split('.')[0] == 'Design'):
             raise TypeError(f'The design type was expected, but {type(design)} had passed')
         elif len(type(design).__qualname__.split('.')) == 1:
             raise TypeError('You have passed the design class, but it\'s must be a class object')
@@ -377,7 +377,7 @@ class TapButton:
                 raise TypeError(f'The {rect[i]}th element of coordinates is not int')
         if not isinstance(function, types.FunctionType):
             raise TypeError(f'function type was expected, but {type(function)} had passed')
-        if not (type(design).__qualname__.split('.')[0] == 'design'):
+        if not (type(design).__qualname__.split('.')[0] == 'Design'):
             raise TypeError(f'The design type was expected, but {type(design)} had passed')
         elif len(type(design).__qualname__.split('.')) == 1:
             raise TypeError('You have passed the design class, but it\'s must be a class object')
@@ -394,24 +394,24 @@ class TapButton:
         self.change_time_in_ticks = design.change_time_in_ticks
         self.text_color_when_does_not_downed = design.text_color_when_does_not_downed
         self.text_color_when_downed = design.text_color_when_downed
-        self.I_am_doesnt_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
-        pygame.draw.rect(self.I_am_doesnt_downed, self.color_when_does_not_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
-        pygame.draw.rect(self.I_am_doesnt_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_when_I_am_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_does_not_downed)
-        self.I_am_doesnt_downed.blit(text_surface_when_I_am_downed, ((io := self.I_am_doesnt_downed.get_size())[0] / 2 - (io0 := text_surface_when_I_am_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
-        self.I_am_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
-        pygame.draw.rect(self.I_am_downed, self.color_when_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
-        pygame.draw.rect(self.I_am_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_when_I_am_does_not_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_downed)
-        self.I_am_downed.blit(text_surface_when_I_am_does_not_downed, ((io := self.I_am_downed.get_size())[0] / 2 - (io0 := text_surface_when_I_am_does_not_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
+        self.surface_not_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
+        pygame.draw.rect(self.surface_not_downed, self.color_when_does_not_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
+        pygame.draw.rect(self.surface_not_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
+        text_surface_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_does_not_downed)
+        self.surface_not_downed.blit(text_surface_downed, ((io := self.surface_not_downed.get_size())[0] / 2 - (io0 := text_surface_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
+        self.surface_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
+        pygame.draw.rect(self.surface_downed, self.color_when_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
+        pygame.draw.rect(self.surface_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
+        text_surface_not_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_downed)
+        self.surface_downed.blit(text_surface_not_downed, ((io := self.surface_downed.get_size())[0] / 2 - (io0 := text_surface_not_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
 
         self.is_downed = False
     
     def pict(self):
         if self.is_downed is False:
-            display_for_simple_panels.blit(self.I_am_doesnt_downed, (self.rect[0], self.rect[1]))
+            display_for_simple_panels.blit(self.surface_not_downed, (self.rect[0], self.rect[1]))
         else:
-            display_for_simple_panels.blit(self.I_am_downed, (self.rect[0], self.rect[1]))
+            display_for_simple_panels.blit(self.surface_downed, (self.rect[0], self.rect[1]))
     
     def handle_some_click(self, event: pygame.event.Event):
         if is_in(event.pos, self.rect):
