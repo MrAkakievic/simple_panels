@@ -11,7 +11,7 @@
 
 ######################################################################################
 
-default_size_of_display = (1600, 900)
+DEFAULT_SIZE_OF_DISPLAY = (1600, 900)
 
 ######################################################################################
 
@@ -53,13 +53,15 @@ def is_in(point: tuple[int, int] | list[int, int], area: tuple[int, int, int, in
 
 
 
+
+
 def select_display(*display):
     global display_for_simple_panels, display_size
     if len(display) == 0:
         if display_for_simple_panels is not None:
             raise DisplayError('Display already initialized, cannot create a new one')
-        display_for_simple_panels = pygame.display.set_mode(default_size_of_display)   # Established the display with default simple_panels size
-        display_size = default_size_of_display
+        display_for_simple_panels = pygame.display.set_mode(DEFAULT_SIZE_OF_DISPLAY)   # Established the display with default simple_panels size
+        display_size = DEFAULT_SIZE_OF_DISPLAY
     elif len(display) == 1:
         if isinstance(display[0], pygame.Surface):
             display_for_simple_panels = display[0]
@@ -81,16 +83,16 @@ class nummer:   # The panel fixed on a some place that shows some text when user
     def set(cls, coordinates: tuple | list, width: Union[int, auto], design):
         if not display_size:
             raise DisplayError('Display wasn\'t detected')
-        if type(coordinates) is not tuple and type(coordinates) is not list and type(coordinates):
+        if not isinstance(coordinates, (tuple, list)):
             raise TypeError(f'The {type(coordinates)} type had passed, but a tuple or list expected')
-        if type(width) is not int and type(width) is not auto:
+        if isinstance(width, (int, auto)):
             raise TypeError(f'The {type(width)} type had passed, but int was expected')
         if len(coordinates) != 2:
             raise ValueError(f'{len(coordinates)} arguments had passed, but 2 ones (x, y) was expected')
         for i in range(2):
-            if type(coordinates[i]) is not int:
-                raise TypeError(f'The {type(coordinates)} type was passed for {i} position in the coordinates, but int was expected')
-        if type(width) is auto:
+            if not isinstance(coordinates[i], int):
+                raise TypeError(f'The {type(coordinates[i])} type was passed for {i} position in the coordinates, but int was expected')
+        if isinstance(width, auto):
             if display_size[0] - coordinates[0] < 15 or display_size[1] - coordinates[1] < 15:
                 raise ValueError(f'The width of a nummer can\'t be smaller that 15. The coordinatates passed don\'t fit within the remaining space up to the boundaries of the display')
             else:
@@ -115,15 +117,15 @@ class nummer:   # The panel fixed on a some place that shows some text when user
         cls.font_color = design.font_color
         cls.width = width
         cls.border_radius = design.border_radius
-        cls.carcas = pygame.surface.Surface((cls.width, cls.width), pygame.SRCALPHA)
-        pygame.draw.rect(cls.carcas, design.inside_color, (0, 0, width, width), border_radius = design.border_radius)
-        pygame.draw.rect(cls.carcas, design.edges_color, (0, 0, width, width), 5, design.border_radius)
+        cls.preset = pygame.surface.Surface((cls.width, cls.width), pygame.SRCALPHA)
+        pygame.draw.rect(cls.preset, design.inside_color, (0, 0, width, width), border_radius = design.border_radius)
+        pygame.draw.rect(cls.preset, design.edges_color, (0, 0, width, width), 5, design.border_radius)
     
     @classmethod
     def pict(cls, text):   # Very function nummer exists to implement. Any interactive element can show some text it wants over nummer.pict()
         if not display_size:
             raise DisplayError('simple_panels is not seen the display')
-        display_for_simple_panels.blit(cls.carcas, (cls.coordinates[0], cls.coordinates[1]))
+        display_for_simple_panels.blit(cls.preset, (cls.coordinates[0], cls.coordinates[1]))
         rend = cls.font.render(str(text), True, cls.font_color)
         display_for_simple_panels.blit(rend, (round(cls.coordinates[0] + cls.width / 2) - rend.get_size()[0] / 2, round(cls.coordinates[1] + cls.width / 2) - rend.get_size()[1] / 2))
             
@@ -141,8 +143,8 @@ class design:   # The general class containing designes for all types of intecac
         return design.NummerDesign(border_radius, inside_color, edges_color, font_color, font_size, font_type)
     
     @classmethod
-    def button(cls, text, border_radius: int = 0, color_doesnt_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_doesnt_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_ticks: int = 0):
-        return design.ButtonDesign(text, border_radius, color_doesnt_downed, color_downed, text_color_doesnt_downed, text_color_downed, font_type, font_size, edges_color, change_time_ticks)
+    def button(cls, text, border_radius: int = 0, color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_when_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_when_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_in_ticks: int = 0):
+        return design.ButtonDesign(text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks)
 
     def show_designes(cls):   # Must show all available built-in designes as a tuple
         pass
@@ -151,21 +153,21 @@ class design:   # The general class containing designes for all types of intecac
         pass                                                # defauld designes should be substitited automatically when specified that design=simple_panels.auto or design=simple_panels_default (needed to choose is needed the new magic number in simple_panels)
     
     class SliderDesign:
-        def __init__(self, inside_color, edges_color, separators_exist, notes_exist):
-            if type(inside_color) is not tuple and type(inside_color) is not list:
+        def __init__(self, inside_color: tuple[int, int, int] | list[int, int, int], edges_color, separators_exist, notes_exist):
+            if not isinstance(inside_color, (tuple, list)):
                 if inside_color is None:
                     raise ValueError(f'The color choosing is necessarily, None is impossible')
                 else:
                     raise TypeError(f'Tuple or list type was expected, but {type(inside_color)} had passed')
-            if type(edges_color) is not tuple and type(edges_color) is not list:
+            if not isinstance(edges_color, (tuple, list)):
                 if edges_color is None:
                     raise ValueError(f'The color choosing is necessarily, None is impossible')
                 else:
                     raise TypeError(f'Tuple or list type was expected, but {type(edges_color)} had passed')
-            if type(separators_exist) is not tuple and type(separators_exist) is not list and type(separators_exist) is not None:
+            if separators_exist is not None and not isinstance(separators_exist, (tuple, list)):
                 raise TypeError(f'Tuple or list or None was expected, but {type(separators_exist)} had passed')
-            if type(notes_exist) is not bool and type(notes_exist) is not None:
-                raise TypeError(f'None or bool type was expected, but {type(type(notes_exist))} had passed')
+            if notes_exist is not None and not isinstance(notes_exist, bool):
+                raise TypeError(f'None or bool type was expected, but {type(notes_exist)} had passed')
             self.inside_color = inside_color
             self.edges_color = edges_color
             self.separators_exist = separators_exist
@@ -173,31 +175,31 @@ class design:   # The general class containing designes for all types of intecac
     
     class NummerDesign:
         def __init__(self, border_radius, inside_color, edges_color, font_color, font_size, font_type):
-            if type(border_radius) is not int:
+            if not isinstance(border_radius, int):
                 raise TypeError(f'The int object was expected, but {type(border_radius)} had passed')
             elif border_radius < 0:
                 raise ValueError('The nummer less than 0 had passed')
-            if type(inside_color) is not tuple and type(inside_color) is not list:
+            if not isinstance(inside_color, (tuple, list)):
                 if inside_color is None:
                     raise ValueError(f'The color choosing is necessarily, None is impossible')
                 else:
                     raise TypeError(f'Tuple or list type was expected, but {type(inside_color)} had passed')
-            if type(edges_color) is not tuple and type(edges_color) is not list:
+            if not isinstance(edges_color, (tuple, list)):
                 if edges_color is None:
                     raise ValueError(f'The color choosing is necessarily, None is impossible')
                 else:
                     raise TypeError(f'Tuple or list type was expected, but {type(edges_color)} had passed')
-            if type(font_color) is not tuple and type(font_color) is not list:
+            if not isinstance(font_color, (tuple, list)):
                 raise TypeError(f'Tuple or list on RGB was expected, but {type(font_color)} had passed')
             elif len(font_color) != 3:
                 raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(font_color)} elements had passed')
             else:
                 for i in range(3):
-                    if type(font_color[i]) is not int:
+                    if isinstance(font_color[i], int):
                         raise TypeError(f'None-int had passed as {i}th color element')
                     elif font_color[i] < 0 or font_color[i] > 255:
                         raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
-            if type(font_size) is not int:
+            if not isinstance(font_size, int):
                 raise TypeError(f'Font size is not int')
             elif font_size < 1:
                 raise ValueError(f'Invalide size of font (<1)')
@@ -213,53 +215,53 @@ class design:   # The general class containing designes for all types of intecac
             self.font_type = font_type
     
     class ButtonDesign:
-        def __init__(self, text, border_radius, color_doesnt_downed, color_downed, text_color_doesnt_downed, text_color_downed, font_type, font_size, edges_color, change_time_ticks):   # change_time_ticks is how long time animation of pressing a button and animation of releasing of it play
+        def __init__(self, text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks):   # change_time_in_ticks is how long time animation of pressing a button and animation of releasing of it play
             try:
                 text = str(text)
             except:
                 raise TypeError(f'Impossible to transform the value to the str type')
-            if type(border_radius) is not int:
+            if not isinstance(border_radius, int):
                 raise TypeError(f'int type was expected, but {type(border_radius)} had passed')
             elif border_radius < 0:
                 raise ValueError(f'Invalide border_radius (<0)')
-            if not (type(color_doesnt_downed) is tuple or type(color_doesnt_downed) is list):
-                raise TypeError(f'Tuple or list type was expected, but {type(color_doesnt_downed)} had passed')
-            elif len(color_doesnt_downed) != 3:
-                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(color_doesnt_downed)} elements had passed')
-            for i in range(len(color_doesnt_downed)):
-                if type(color_doesnt_downed[i]) is not int:
-                    raise TypeError(f'int type was expected, but {type(color_doesnt_downed[i])} had passed')
-                if color_doesnt_downed[i] < 0 and color_doesnt_downed[i] > 255:
+            if not isinstance(color_when_does_not_downed, (tuple, list)):
+                raise TypeError(f'Tuple or list type was expected, but {type(color_when_does_not_downed)} had passed')
+            elif len(color_when_does_not_downed) != 3:
+                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(color_when_does_not_downed)} elements had passed')
+            for i in range(len(color_when_does_not_downed)):
+                if not isinstance(color_when_does_not_downed[i], int):
+                    raise TypeError(f'int type was expected, but {type(color_when_does_not_downed[i])} had passed')
+                if color_when_does_not_downed[i] < 0 and color_when_does_not_downed[i] > 255:
                     raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
-            if not (type(color_downed) is tuple or type(color_downed) is list):
-                raise TypeError(f'Tuple or list type was expected, but {type(color_downed)} had passed')
-            elif len(color_downed) != 3:
-                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(color_downed)} elements had passed')
-            for i in range(len(color_downed)):
-                if type(color_downed[i]) is not int:
-                    raise TypeError(f'int type was expected, but {type(color_downed[i])} had passed')
-                if color_downed[i] < 0 and color_downed[i] > 255:
+            if not isinstance(color_when_downed, (tuple, list)):
+                raise TypeError(f'Tuple or list type was expected, but {type(color_when_downed)} had passed')
+            elif len(color_when_downed) != 3:
+                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(color_when_downed)} elements had passed')
+            for i in range(len(color_when_downed)):
+                if not isinstance(color_when_downed[i], int):
+                    raise TypeError(f'int type was expected, but {type(color_when_downed[i])} had passed')
+                if color_when_downed[i] < 0 and color_when_downed[i] > 255:
                     raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
-            if not (type(text_color_doesnt_downed) is tuple or type(text_color_doesnt_downed) is list):
-                raise TypeError(f'Tuple or list type was expected, but {type(text_color_doesnt_downed)} had passed')
-            elif len(text_color_doesnt_downed) != 3:
-                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(text_color_doesnt_downed)} elements had passed')
-            for i in range(len(text_color_doesnt_downed)):
-                if type(text_color_doesnt_downed[i]) is not int:
-                    raise TypeError(f'int type was expected, but {type(text_color_doesnt_downed[i])} had passed')
-                if text_color_doesnt_downed[i] < 0 and text_color_doesnt_downed[i] > 255:
+            if not isinstance(text_color_when_does_not_downed, (tuple, list)):
+                raise TypeError(f'Tuple or list type was expected, but {type(text_color_when_does_not_downed)} had passed')
+            elif len(text_color_when_does_not_downed) != 3:
+                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(text_color_when_does_not_downed)} elements had passed')
+            for i in range(len(text_color_when_does_not_downed)):
+                if not isinstance(text_color_when_does_not_downed[i], int):
+                    raise TypeError(f'int type was expected, but {type(text_color_when_does_not_downed[i])} had passed')
+                if text_color_when_does_not_downed[i] < 0 and text_color_when_does_not_downed[i] > 255:
                     raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
-            if not (type(text_color_downed) is tuple or type(text_color_downed) is list):
-                raise TypeError(f'Tuple or list type was expected, but {type(text_color_downed)} had passed')
-            elif len(text_color_downed) != 3:
-                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(text_color_downed)} elements had passed')
-            for i in range(len(text_color_downed)):
-                if type(text_color_downed[i]) is not int:
-                    raise TypeError(f'int type was expected, but {type(text_color_downed[i])} had passed')
-                if text_color_downed[i] < 0 and text_color_downed[i] > 255:
+            if not isinstance(text_color_when_downed, (tuple, list)):
+                raise TypeError(f'Tuple or list type was expected, but {type(text_color_when_downed)} had passed')
+            elif len(text_color_when_downed) != 3:
+                raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(text_color_when_downed)} elements had passed')
+            for i in range(len(text_color_when_downed)):
+                if not isinstance(text_color_when_downed[i], int):
+                    raise TypeError(f'int type was expected, but {type(text_color_when_downed[i])} had passed')
+                if text_color_when_downed[i] < 0 and text_color_when_downed[i] > 255:
                     raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
 
-            if type(font_size) is not int:
+            if not isinstance(font_size, int):
                 raise TypeError(f'int type was expected, but {type(font_size)} had passed')
             elif font_size < 1:
                 raise ValueError(f'Indalid value (less than 1)')
@@ -269,62 +271,62 @@ class design:   # The general class containing designes for all types of intecac
             except:
                 raise ValueError('This font is not found')
 
-            if not (type(edges_color) is tuple or type(edges_color) is list):
+            if not isinstance(edges_color, (tuple, list)):
                 raise TypeError(f'Tuple or list type was expected, but {type(edges_color)} had passed')
             elif len(edges_color) != 3:
                 raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(edges_color)} elements had passed')
             for i in range(len(edges_color)):
-                if type(edges_color[i]) is not int:
+                if not isinstance(edges_color[i], int):
                     raise TypeError(f'int type was expected, but {type(edges_color[i])} had passed')
                 if edges_color[i] < 0 and edges_color[i] > 255:
                     raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
-            if type(change_time_ticks) is not int:
-                raise TypeError(f'int type was expected, but {type(change_time_ticks)} had passed')
-            elif change_time_ticks < 0:
+            if not isinstance(change_time_in_ticks, int):
+                raise TypeError(f'int type was expected, but {type(change_time_in_ticks)} had passed')
+            elif change_time_in_ticks < 0:
                 raise ValueError('Invalide value (less than 0 or bigger than 255)')
             self.text = text
             self.border_radius = border_radius
-            self.color_doesnt_downed = color_doesnt_downed
-            self.color_downed = color_downed
-            self.text_color_doesnt_downed = text_color_doesnt_downed
-            self.text_color_downed = text_color_downed
+            self.color_when_does_not_downed = color_when_does_not_downed
+            self.color_when_downed = color_when_downed
+            self.text_color_when_does_not_downed = text_color_when_does_not_downed
+            self.text_color_when_downed = text_color_when_downed
             self.font_type = font_type
             self.font_size = font_size
             self.edges_color = edges_color
-            self.change_time_ticks = change_time_ticks
+            self.change_time_in_ticks = change_time_in_ticks
 
 
 
 class RelateSlider:   # The type of slider in which the value it represents varyes between tips-values, and middle points-values are between that two tip values. Like here: *1* 2 3 4 *5* when 1 pinned as a start point and 5 pinned as an end point
     def __init__(self, dependent_variable_as_list: list, coordinates: tuple | list, min_value: int | float, max_value: int | float, k_steps: int, live_level: int, design):   # dependent_variable_as_list is a list of 1 element   # live_level is a point where the slider on is in the start of a simulation
-        if type(min_value) is not int and type(min_value) is not float:
+        if not isinstance(min_value, (int, float)):
             raise TypeError(f'Int or float type was expected, but {type(min_value)} had passed')
-        if type(max_value) is not int and type(max_value) is not float:
+        if not isinstance(max_value, (int, float)):
             raise TypeError(f'Int or float type was expected, but {type(max_value)} had passed')
-        if type(k_steps) is not int:
+        if not isinstance(k_steps, int):
             raise TypeError(f'Int type was expected, but {type(k_steps)} had passed')
-        if type(coordinates) is not tuple and type(coordinates) is not list:
+        if not isinstance(coordinates, (tuple, list)):
             raise TypeError(f'Tuple or list type was expected, but {type(coordinates)} had passed')
         else:
             if len(coordinates) != 4:
                 raise ValueError(f'coordinates must contain 4 element (x, y, width and height), but is {len(coordinates)}')
             else:
-                if type(coordinates[0]) is not int:
+                if not isinstance(coordinates[0], int):
                     raise TypeError(f'x coordinate must be int type, but {type(coordinates[0])} had passed')
-                elif type(coordinates[1]) is not int:
+                elif not isinstance(coordinates[1], int):
                     raise TypeError(f'y coordinate must be int type, but {type(coordinates[1])} had passed')
-                elif type(coordinates[2]) is not int:
+                elif not isinstance(coordinates[2], int):
                     raise TypeError(f'width must be int type, but {type(coordinates[2])} had passed')
-                elif type(coordinates[3]) is not int:
+                elif not isinstance(coordinates[3], int):
                     raise TypeError(f'height must be int type, but {type(coordinates[3])} had passed')
-        if type(dependent_variable_as_list) is not list:
+        if not isinstance(dependent_variable_as_list, list):
             raise TypeError(f'dependent_valiable must be lists of 1 entry, but {type(k_steps)} had passed')
         else:
             if len(dependent_variable_as_list) != 1:
                 raise ValueError(f'dependent_variable must contain 1 element, but is {len(dependent_variable_as_list)}')
         if k_steps < 1:
             raise ValueError(f'k_steps must be >= 1, but is {k_steps}')
-        if type(live_level) is not int:
+        if not isinstance(live_level, int):
             raise TypeError(f'Int object was expected, but {type(live_level)} had passed')
         else:
             if live_level > k_steps or live_level < 0:
@@ -354,26 +356,26 @@ class RelateSlider:   # The type of slider in which the value it represents vary
     def pict(self):
         pass
 
-class Incut:   # A interactive thing pops up when some interctive object requests some input
+class Incut:   # A interactive thing pops up when some interctive object requests some input like text (clipdoard)
     def create():
         pass
     
 class TapButton:
     instances = []
     def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls)
+        instance = super().__new__(cls, args, kwargs)
         cls.instances.append(instance)
         return instance
 
     def __init__(self, rect: tuple[int, int, int, int] | list[int, int, int, int], function: types.FunctionType, design):   # rect is a rect within which the button fits
-        if type(rect) is not tuple and type(rect) is not list:
+        if not isinstance(rect, (tuple, list)):
             raise TypeError(f'rect argument must be a list or tuple type')
         elif len(rect) != 4:
             raise ValueError(f'rect require 4 arguments (x, y, width, height), but {len(rect)} had passed')
         for i in range(len(rect)):
-            if type(rect[i]) is not int:
+            if not isinstance(rect[i], int):
                 raise TypeError(f'The {rect[i]}th element of coordinates is not int')
-        if type(function) is not types.FunctionType:
+        if not isinstance(function, types.FunctionType):
             raise TypeError(f'function type was expected, but {type(function)} had passed')
         if not (type(design).__qualname__.split('.')[0] == 'design'):
             raise TypeError(f'The design type was expected, but {type(design)} had passed')
@@ -386,37 +388,37 @@ class TapButton:
         self.rect = rect
         self.function = function
         self.border_radius = design.border_radius
-        self.color_doesnt_downed = design.color_doesnt_downed
-        self.color_downed = design.color_downed
+        self.color_when_does_not_downed = design.color_when_does_not_downed
+        self.color_when_downed = design.color_when_downed
         self.edges_color = design.edges_color
-        self.change_time_ticks = design.change_time_ticks
-        self.text_color_doesnt_downed = design.text_color_doesnt_downed
-        self.text_color_downed = design.text_color_downed
+        self.change_time_in_ticks = design.change_time_in_ticks
+        self.text_color_when_does_not_downed = design.text_color_when_does_not_downed
+        self.text_color_when_downed = design.text_color_when_downed
         self.I_am_doesnt_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
-        pygame.draw.rect(self.I_am_doesnt_downed, self.color_doesnt_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
+        pygame.draw.rect(self.I_am_doesnt_downed, self.color_when_does_not_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
         pygame.draw.rect(self.I_am_doesnt_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_by_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_doesnt_downed)
-        self.I_am_doesnt_downed.blit(text_surface_by_downed, ((io := self.I_am_doesnt_downed.get_size())[0] / 2 - (io0 := text_surface_by_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
+        text_surface_when_I_am_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_does_not_downed)
+        self.I_am_doesnt_downed.blit(text_surface_when_I_am_downed, ((io := self.I_am_doesnt_downed.get_size())[0] / 2 - (io0 := text_surface_when_I_am_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
         self.I_am_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
-        pygame.draw.rect(self.I_am_downed, self.color_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
+        pygame.draw.rect(self.I_am_downed, self.color_when_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
         pygame.draw.rect(self.I_am_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_by_doesnt_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_downed)
-        self.I_am_downed.blit(text_surface_by_doesnt_downed, ((io := self.I_am_downed.get_size())[0] / 2 - (io0 := text_surface_by_doesnt_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
+        text_surface_when_I_am_does_not_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_downed)
+        self.I_am_downed.blit(text_surface_when_I_am_does_not_downed, ((io := self.I_am_downed.get_size())[0] / 2 - (io0 := text_surface_when_I_am_does_not_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
 
-        self.downed = False
+        self.is_downed = False
     
     def pict(self):
-        if self.downed is False:
+        if self.is_downed is False:
             display_for_simple_panels.blit(self.I_am_doesnt_downed, (self.rect[0], self.rect[1]))
         else:
             display_for_simple_panels.blit(self.I_am_downed, (self.rect[0], self.rect[1]))
     
     def handle_some_click(self, event: pygame.event.Event):
         if is_in(event.pos, self.rect):
-            self.downed = not self.downed
+            self.is_downed = not self.is_downed
     
     def tick(self):
-        self.downed = False
+        self.is_downed = False
 
 def handle(all_events: tuple | list):   # Must be called for every event causing in pygame
     if not isinstance(all_events, (tuple, list)):
