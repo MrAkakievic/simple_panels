@@ -2,7 +2,7 @@
 
 ## About
 <a name = "about-anchor"></a>
-This python library designed to serve an intuitive buttons, sliders, windows and other types of interactive elements with basic customization and functionality features into pygame projects
+This python library designed for embedding intuitive buttons, sliders, windows and other types of interactive elements with basic customization and functionality features into pygame projects
 
 Tags: __ __ __
 
