@@ -3,6 +3,7 @@
 """
 1). Design.show_designs()   # Shows designs you can use just now without making your own ones
 2). Design.set_default()   # Constructor where you can make/choose designs for different classes or establish a built-in design pack
+3). To deal with change_time_in_ticks so make that color changed gradually
 """
 
 
@@ -44,7 +45,7 @@ class Auto:
 
 display_for_simple_panels = None
 display_size = None
-nolimits = NoLimits()
+NoLimits = NoLimits()
 Auto = Auto()
 
 
