@@ -1,8 +1,8 @@
 
 # Features should be added in future:
 """
-1). designes   # Shows designes you can use just now without making your own ones
-2). default_style   # Constructor where you can make/choose designes for different classes or establish a built-in design pack
+1). design.show_designes()   # Shows designes you can use just now without making your own ones
+2). design.set_default()   # Constructor where you can make/choose designes for different classes or establish a built-in design pack
 """
 
 
@@ -144,6 +144,12 @@ class design:   # The general class containing designes for all types of intecac
     def button(cls, text, border_radius: int = 0, color_doesnt_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_doesnt_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_ticks: int = 0):
         return design.ButtonDesign(text, border_radius, color_doesnt_downed, color_downed, text_color_doesnt_downed, text_color_downed, font_type, font_size, edges_color, change_time_ticks)
 
+    def show_designes(cls):   # Must show all available built-in designes as a tuple
+        pass
+    
+    def set_default(cls, design_kit, for_objects = None):   # Sets the defaul design kits for types of objects (Buttons, sliders, etc.) from this for_objects. Design kit is a set of designes designed for every type of interactive object in simple_panels or at least for that types of interactive objects noted in for_objects. A kit of design can be chosen fromin ones and can be creates as a now one from custom designes
+        pass                                                # defauld designes should be substitited automatically when specified that design=simple_panels.auto or design=simple_panels_default (needed to choose is needed the new magic number in simple_panels)
+    
     class SliderDesign:
         def __init__(self, inside_color, edges_color, separators_exist, notes_exist):
             if type(inside_color) is not tuple and type(inside_color) is not list:
