@@ -42,23 +42,27 @@ class auto:
 
 
 
-display_for_sps = None
+display_for_simple_panels = None
 display_size = None
 nolimits = nolimits()
 auto = auto()
 
 
+def is_in(point: tuple[int, int] | list[int, int], area: tuple[int, int, int, int] | list[int, int, int, int]) -> bool:   # Checks is a point in some area
+    return True if   (     area[0] <= point[0] and area[0] + area[2] >= point[0] and area[1] <= point[1] and area[1] + area[3] >= point[1]     )   else False
+
+
 
 def select_display(*display):
-    global display_for_sps, display_size
+    global display_for_simple_panels, display_size
     if len(display) == 0:
-        if display_for_sps is not None:
+        if display_for_simple_panels is not None:
             raise DisplayError('Display already initialized, cannot create a new one')
-        display_for_sps = pygame.display.set_mode(default_size_of_display)   # Established the display with default simple_panels size
+        display_for_simple_panels = pygame.display.set_mode(default_size_of_display)   # Established the display with default simple_panels size
         display_size = default_size_of_display
     elif len(display) == 1:
         if isinstance(display[0], pygame.Surface):
-            display_for_sps = display[0]
+            display_for_simple_panels = display[0]
             display_size = display[0].get_size()
         else:
             raise DisplayError(f'select_display() function requires a pygame.Surface object, but {type(display[0])} have passed')
@@ -119,9 +123,9 @@ class nummer:   # The panel fixed on a some place that shows some text when user
     def pict(cls, text):   # Very function nummer exists to implement. Any interactive element can show some text it wants over nummer.pict()
         if not display_size:
             raise DisplayError('simple_panels is not seen the display')
-        display_for_sps.blit(cls.carcas, (cls.coordinates[0], cls.coordinates[1]))
+        display_for_simple_panels.blit(cls.carcas, (cls.coordinates[0], cls.coordinates[1]))
         rend = cls.font.render(str(text), True, cls.font_color)
-        display_for_sps.blit(rend, (round(cls.coordinates[0] + cls.width / 2) - rend.get_size()[0] / 2, round(cls.coordinates[1] + cls.width / 2) - rend.get_size()[1] / 2))
+        display_for_simple_panels.blit(rend, (round(cls.coordinates[0] + cls.width / 2) - rend.get_size()[0] / 2, round(cls.coordinates[1] + cls.width / 2) - rend.get_size()[1] / 2))
             
 
 
@@ -349,6 +353,12 @@ class Incut:   # A interactive thing pops up when some interctive object request
         pass
     
 class TapButton:
+    instances = []
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+        cls.instances.append(instance)
+        return instance
+
     def __init__(self, rect: tuple[int, int, int, int] | list[int, int, int, int], function: types.FunctionType, design):   # rect is a rect within which the button fits
         if type(rect) is not tuple and type(rect) is not list:
             raise TypeError(f'rect argument must be a list or tuple type')
@@ -391,6 +401,30 @@ class TapButton:
     
     def pict(self):
         if self.downed is False:
-            display_for_sps.blit(self.I_am_doesnt_downed, (self.rect[0], self.rect[1]))
+            display_for_simple_panels.blit(self.I_am_doesnt_downed, (self.rect[0], self.rect[1]))
         else:
-            display_for_sps.blit(self.I_am_downed, (self.rect[0], self.rect[1]))
+            display_for_simple_panels.blit(self.I_am_downed, (self.rect[0], self.rect[1]))
+    
+    def handle_some_click(self, event: pygame.event.Event):
+        if is_in(event.pos, self.rect):
+            self.downed = not self.downed
+    
+    def tick(self):
+        self.downed = False
+
+def handle(all_events: tuple | list):   # Must be called for every event causing in pygame
+    if not isinstance(all_events, (tuple, list)):
+        raise TypeError(f'a list/tuple of pygame.events had expected but {type(all_events)} was passed')
+    else:
+        for event in all_events:
+            if not isinstance(event, pygame.event.Event):
+                raise TypeError(f'Impossible to handle {type(event)}, so pygame.event.Event object expected')
+            else:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tapbutton_instances_here = TapButton.instances
+                    for button_num in range(len(tapbutton_instances_here)):
+                        tapbutton_instances_here[button_num].handle_some_click(event)
+
+def tick():   # Serves all processes simple_panels must handle each tick of the main loop. MUST be called for every pygame.time.Clock().tick(...) tick in the main loop in that program using simple_panels
+    for tapbutton in TapButton.instances:
+        tapbutton.tick()
