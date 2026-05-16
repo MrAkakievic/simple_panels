@@ -4,6 +4,8 @@
 1). Design.show_designs()   # Shows designs you can use just now without making your own ones
 2). Design.set_default()   # Constructor where you can make/choose designs for different classes or establish a built-in design pack
 3). To deal with change_time_in_ticks so make that color changed gradually
+4). All simple_panels interactive objects should be not fixed ones, but should be remaked as movable ones that can be freely relocated. And they should be able to give theirselves as pygame.surface.Surface()
+5). Classes in designe kits. Should be maked that in kits of design it would be able to design several designes for one type of interactive object like checklist with one type of design, sub-checklist with different one
 """
 
 
@@ -71,64 +73,6 @@ def select_display(*display):
             raise DisplayError(f'select_display() function requires a pygame.Surface object, but {type(display[0])} have passed')
     else:
         raise DisplayError(f'select_display() function requires one argument, but {len(display)} ones have passed')
-
-
-
-class Nummer:   # The panel fixed on a some place that shows some text when user interacts with some simple_panels object
-    exist = False
-    coordinates = None   # Top-left point
-    width = None   # The same value for width along x and for width along y
-    font = None
-
-    @classmethod
-    def set(cls, coordinates: tuple | list, width: Union[int, Auto], design):
-        if not display_size:
-            raise DisplayError('Display wasn\'t detected')
-        if not isinstance(coordinates, (tuple, list)):
-            raise TypeError(f'The {type(coordinates)} type had passed, but a tuple or list expected')
-        if isinstance(width, (int, Auto)):
-            raise TypeError(f'The {type(width)} type had passed, but int was expected')
-        if len(coordinates) != 2:
-            raise ValueError(f'{len(coordinates)} arguments had passed, but 2 ones (x, y) was expected')
-        for i in range(2):
-            if not isinstance(coordinates[i], int):
-                raise TypeError(f'The {type(coordinates[i])} type was passed for {i} position in the coordinates, but int was expected')
-        if isinstance(width, Auto):
-            if display_size[0] - coordinates[0] < 15 or display_size[1] - coordinates[1] < 15:
-                raise ValueError(f'The width of a nummer can\'t be smaller that 15. The coordinatates passed don\'t fit within the remaining space up to the boundaries of the display')
-            else:
-                io = display_size[0] - coordinates[0]
-                if display_size[1] - coordinates[1] < io:
-                    io = display_size[1] - coordinates[1]
-                width = io
-        else:
-            if width < 15:
-                raise ValueError(f'{width} is too small value. You can only use 15 and bigger')
-        if not (type(design).__qualname__.split('.')[0] == 'Design'):
-            raise TypeError(f'The design type was expected, but {type(design)} had passed')   # These is a design type for every class of interactive object but all of them located in the Design class
-        elif len(type(design).__qualname__.split('.')) == 1:
-            raise TypeError('You have passed the design class, but it\'s must be a class object')
-        elif len(type(design).__qualname__.split('.')) > 2:
-            raise TypeError(f'The design type was expected, but {type(design)} had passed')
-        elif not (type(design).__qualname__.split('.')[1] == 'NummerDesign'):
-            raise DesignError('You have passed the design, which doesn\'t designed for nummer. Check how you was created it')
-        cls.exist = True
-        cls.coordinates = tuple(coordinates)
-        cls.font = pygame.font.SysFont(design.font_type, design.font_size)
-        cls.font_color = design.font_color
-        cls.width = width
-        cls.border_radius = design.border_radius
-        cls.preset = pygame.surface.Surface((cls.width, cls.width), pygame.SRCALPHA)
-        pygame.draw.rect(cls.preset, design.inside_color, (0, 0, width, width), border_radius = design.border_radius)
-        pygame.draw.rect(cls.preset, design.edges_color, (0, 0, width, width), 5, design.border_radius)
-    
-    @classmethod
-    def pict(cls, text):   # Very function nummer exists to implement. Any interactive element can show some text it wants over nummer.pict()
-        if not display_size:
-            raise DisplayError('simple_panels is not seen the display')
-        display_for_simple_panels.blit(cls.preset, (cls.coordinates[0], cls.coordinates[1]))
-        rend = cls.font.render(str(text), True, cls.font_color)
-        display_for_simple_panels.blit(rend, (round(cls.coordinates[0] + cls.width / 2) - rend.get_size()[0] / 2, round(cls.coordinates[1] + cls.width / 2) - rend.get_size()[1] / 2))
             
 
 
@@ -144,8 +88,8 @@ class Design:   # The general class containing designs for all types of interact
         return Design.NummerDesign(border_radius, inside_color, edges_color, font_color, font_size, font_type)
     
     @classmethod
-    def button(cls, text, border_radius: int = 0, color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_when_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_when_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_in_ticks: int = 0):
-        return Design.ButtonDesign(text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks)
+    def button(cls, border_radius: int = 0, color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 0, 0), color_when_downed: tuple[int, int, int] | list[int, int, int] = (255, 125, 125), text_color_when_does_not_downed: tuple[int, int, int] | list[int, int, int] = (255, 255, 255), text_color_when_downed: tuple[int, int, int] | list[int, int, int] = (125, 0, 0), font_type: str = ('centurygothic'), font_size: int = 16, edges_color: tuple[int, int, int] | list[int, int, int] = (0, 0, 0), change_time_in_ticks: int = 0):
+        return Design.ButtonDesign(border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks)
 
     def show_designs(cls):   # Must show all available built-in designs as a tuple
         pass
@@ -196,7 +140,7 @@ class Design:   # The general class containing designs for all types of interact
                 raise ValueError(f'Tuple or list with 3 elements (RGB) was expected, but {len(font_color)} elements had passed')
             else:
                 for i in range(3):
-                    if isinstance(font_color[i], int):
+                    if not isinstance(font_color[i], int):
                         raise TypeError(f'None-int had passed as {i}th color element')
                     elif font_color[i] < 0 or font_color[i] > 255:
                         raise ValueError(f'{i}st color argument is less than 0 or bigger than 255')
@@ -216,11 +160,7 @@ class Design:   # The general class containing designs for all types of interact
             self.font_type = font_type
     
     class ButtonDesign:
-        def __init__(self, text, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks):   # change_time_in_ticks is how long time animation of pressing a button and animation of releasing of it play
-            try:
-                text = str(text)
-            except:
-                raise TypeError(f'Impossible to transform the value to the str type')
+        def __init__(self, border_radius, color_when_does_not_downed, color_when_downed, text_color_when_does_not_downed, text_color_when_downed, font_type, font_size, edges_color, change_time_in_ticks):   # change_time_in_ticks is how long time animation of pressing a button and animation of releasing of it play
             if not isinstance(border_radius, int):
                 raise TypeError(f'int type was expected, but {type(border_radius)} had passed')
             elif border_radius < 0:
@@ -285,7 +225,6 @@ class Design:   # The general class containing designs for all types of interact
                 raise TypeError(f'int type was expected, but {type(change_time_in_ticks)} had passed')
             elif change_time_in_ticks < 0:
                 raise ValueError('Invalide value (less than 0 or bigger than 255)')
-            self.text = text
             self.border_radius = border_radius
             self.color_when_does_not_downed = color_when_does_not_downed
             self.color_when_downed = color_when_downed
@@ -296,10 +235,70 @@ class Design:   # The general class containing designs for all types of interact
             self.edges_color = edges_color
             self.change_time_in_ticks = change_time_in_ticks
 
+DEFAUL_NUMMER_DESING = Design.nummer()
+DEFAUL_BUTTON_DESING = Design.button()
+DEFAUL_SLIDER_DESING = Design.slider()
+
+
+class Nummer:   # The panel fixed on a some place that shows some text when user interacts with some simple_panels object
+    exist = False
+    coordinates = None   # Top-left point
+    width = None   # The same value for width along x and for width along y
+    font = None
+
+    @classmethod
+    def set(cls, coordinates: tuple | list, width: Union[int, Auto], design = DEFAUL_NUMMER_DESING):
+        if not display_size:
+            raise DisplayError('Display wasn\'t detected')
+        if not isinstance(coordinates, (tuple, list)):
+            raise TypeError(f'The {type(coordinates)} type had passed, but a tuple or list expected')
+        if not isinstance(width, int) and not type(width) == Auto:
+            raise TypeError(f'The {type(width)} type had passed, but int was expected')
+        if len(coordinates) != 2:
+            raise ValueError(f'{len(coordinates)} arguments had passed, but 2 ones (x, y) was expected')
+        for i in range(2):
+            if not isinstance(coordinates[i], int):
+                raise TypeError(f'The {type(coordinates[i])} type was passed for {i} position in the coordinates, but int was expected')
+        if type(width) == Auto:
+            if display_size[0] - coordinates[0] < 15 or display_size[1] - coordinates[1] < 15:
+                raise ValueError(f'The width of a nummer can\'t be smaller that 15. The coordinatates passed don\'t fit within the remaining space up to the boundaries of the display')
+            else:
+                io = display_size[0] - coordinates[0]
+                if display_size[1] - coordinates[1] < io:
+                    io = display_size[1] - coordinates[1]
+                width = io
+        else:
+            if width < 15:
+                raise ValueError(f'{width} is too small value. You can only use 15 and bigger')
+        if not (type(design).__qualname__.split('.')[0] == 'Design'):
+            raise TypeError(f'The design type was expected, but {type(design)} had passed')   # These is a design type for every class of interactive object but all of them located in the Design class
+        elif len(type(design).__qualname__.split('.')) == 1:
+            raise TypeError('You have passed the design class, but it\'s must be a class object')
+        elif len(type(design).__qualname__.split('.')) > 2:
+            raise TypeError(f'The design type was expected, but {type(design)} had passed')
+        elif not (type(design).__qualname__.split('.')[1] == 'NummerDesign'):
+            raise DesignError('You have passed the design, which doesn\'t designed for nummer. Check how you was created it')
+        cls.exist = True
+        cls.coordinates = tuple(coordinates)
+        cls.font = pygame.font.SysFont(design.font_type, design.font_size)
+        cls.font_color = design.font_color
+        cls.width = width
+        cls.border_radius = design.border_radius
+        cls.preset = pygame.surface.Surface((cls.width, cls.width), pygame.SRCALPHA)
+        pygame.draw.rect(cls.preset, design.inside_color, (0, 0, width, width), border_radius = design.border_radius)
+        pygame.draw.rect(cls.preset, design.edges_color, (0, 0, width, width), 5, design.border_radius)
+    
+    @classmethod
+    def pict(cls, text):   # Very function nummer exists to implement. Any interactive element can show some text it wants over nummer.pict()
+        if not display_size:
+            raise DisplayError('simple_panels is not seen the display')
+        display_for_simple_panels.blit(cls.preset, (cls.coordinates[0], cls.coordinates[1]))
+        rend = cls.font.render(str(text), True, cls.font_color)
+        display_for_simple_panels.blit(rend, (round(cls.coordinates[0] + cls.width / 2) - rend.get_size()[0] / 2, round(cls.coordinates[1] + cls.width / 2) - rend.get_size()[1] / 2))
 
 
 class RelateSlider:   # The type of slider in which the value it represents varyes between tips-values, and middle points-values are between that two tip values. Like here: *1* 2 3 4 *5* when 1 pinned as a start point and 5 pinned as an end point
-    def __init__(self, dependent_variable_as_list: list, coordinates: tuple | list, min_value: int | float, max_value: int | float, k_steps: int, live_level: int, design):   # dependent_variable_as_list is a list of 1 element   # live_level is a point where the slider on is in the start of a simulation
+    def __init__(self, dependent_variable_as_list: list, coordinates: tuple | list, min_value: int | float, max_value: int | float, k_steps: int, live_level: int, design = DEFAUL_SLIDER_DESING):   # dependent_variable_as_list is a list of 1 element   # live_level is a point where the slider on is in the start of a simulation
         if not isinstance(min_value, (int, float)):
             raise TypeError(f'Int or float type was expected, but {type(min_value)} had passed')
         if not isinstance(max_value, (int, float)):
@@ -364,11 +363,15 @@ class Incut:   # A interactive thing pops up when some interctive object request
 class TapButton:
     instances = []
     def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls, args, kwargs)
+        instance = super().__new__(cls)
         cls.instances.append(instance)
         return instance
 
-    def __init__(self, rect: tuple[int, int, int, int] | list[int, int, int, int], function: types.FunctionType, design):   # rect is a rect within which the button fits
+    def __init__(self, text: str, rect: tuple[int, int, int, int] | list[int, int, int, int], function: types.FunctionType, design = DEFAUL_BUTTON_DESING):   # rect is a rect within which the button fits
+        try:
+            text = str(text)
+        except:
+            raise TypeError(f'Impossible to transform the value to the str type')
         if not isinstance(rect, (tuple, list)):
             raise TypeError(f'rect argument must be a list or tuple type')
         elif len(rect) != 4:
@@ -386,6 +389,7 @@ class TapButton:
             raise TypeError(f'The design type was expected, but {type(design)} had passed')
         elif not (type(design).__qualname__.split('.')[1] == 'ButtonDesign'):
             raise DesignError('A design type object has passed, which doesn\'t intended for the Buttons. Check whereby it was created')
+        self.text = text
         self.rect = rect
         self.function = function
         self.border_radius = design.border_radius
@@ -398,12 +402,12 @@ class TapButton:
         self.surface_not_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
         pygame.draw.rect(self.surface_not_downed, self.color_when_does_not_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
         pygame.draw.rect(self.surface_not_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_does_not_downed)
+        text_surface_downed = pygame.font.SysFont(design.font_type, design.font_size).render(text, True, design.text_color_when_does_not_downed)
         self.surface_not_downed.blit(text_surface_downed, ((io := self.surface_not_downed.get_size())[0] / 2 - (io0 := text_surface_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
         self.surface_downed = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
         pygame.draw.rect(self.surface_downed, self.color_when_downed, (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
         pygame.draw.rect(self.surface_downed, self.edges_color, (0, 0, self.rect[2], self.rect[3]), 5, self.border_radius)
-        text_surface_not_downed = pygame.font.SysFont(design.font_type, design.font_size).render(design.text, True, design.text_color_when_downed)
+        text_surface_not_downed = pygame.font.SysFont(design.font_type, design.font_size).render(text, True, design.text_color_when_downed)
         self.surface_downed.blit(text_surface_not_downed, ((io := self.surface_downed.get_size())[0] / 2 - (io0 := text_surface_not_downed.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
 
         self.is_downed = False
@@ -417,8 +421,9 @@ class TapButton:
     def handle_some_click(self, event: pygame.event.Event):
         if is_in(event.pos, self.rect):
             self.is_downed = not self.is_downed
+            self.function()
     
-    def tick(self):
+    def update(self):
         self.is_downed = False
 
 def handle(all_events: tuple | list):   # Must be called for every event causing in pygame
@@ -434,6 +439,6 @@ def handle(all_events: tuple | list):   # Must be called for every event causing
                     for button_num in range(len(tapbutton_instances_here)):
                         tapbutton_instances_here[button_num].handle_some_click(event)
 
-def tick():   # Serves all processes simple_panels must handle each tick of the main loop. MUST be called for every pygame.time.Clock().tick(...) tick in the main loop in that program using simple_panels
+def update():   # Serves all processes simple_panels must handle each tick of the main loop. MUST be called for every pygame.time.Clock().tick(...) tick in the main loop in that program using simple_panels
     for tapbutton in TapButton.instances:
-        tapbutton.tick()
+        tapbutton.update()
