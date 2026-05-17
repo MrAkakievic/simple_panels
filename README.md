@@ -13,7 +13,8 @@ Tags: python, pygame, UI, simplify
 - [Features](#features-anchor)
 - [Installation & Connection](#installation-and-connection-anchor)
 - [Documentation](#documentation-anchor)
-- - [What is simple panels? The necessarly items you should embed into your simple_panels program](#before-consuming)
+  - [The necessary items you should embed before consuming simple_panels](#before-consuming)
+  - [The quick start](#the-quick-start)
 
 ## Features
 <a name = "features-anchor"></a>
@@ -44,7 +45,7 @@ while True:
     for event in events:             # Your handling, you're just working with the fresh data
         ...                          # Your handling
 ```
-* sps.update() - this function reports sps that the tick ended and sps prepares for the next turn. If you don't called this then sps think the program is in the previos tick. But if calld this function twice, sps will overtake the main loop at 1 tick. This function is necessary to call before pygame.time.Clock().tick() (the end of the tick) or before the code of the main loop. I recommend the firs approach:
+* sps.update() --- This function reports sps that the tick ended and sps prepares for the next turn. If you don't called this then sps think the program is in the previos tick. But if calld this function twice, sps will overtake the main loop at 1 tick. This function is necessary to call before pygame.time.Clock().tick() (the end of the tick) or before the code of the main loop. I recommend the firs approach:
 >[!NOTE]
 >sps.update() requires no parameters such FPS
 
@@ -70,12 +71,50 @@ pygame.init()
 screen = pygame.display.set_mode((1600, 900))
 sps.select_display(screen)
 ```
+* sps.pict() --- pict() is a class of functions that map sps objects onto a display, but the sps.pict() maps all sps objects onto a display. Call it then call pygame.display.flip() or pygame.display.update()
+```
+import pygame, simple_panels as sps
+pygame.init()
 
+screen = pygame.display.set_mode((1600, 900))
+sps.select_display(screen)
 
+pygame.draw.circle(screen, (255, 0, 0), (200, 200), 100)                # <--------- a pygame object
+pygame.display.flip()                                                   # <--------- this objects is showed on the display
 
+sps.TapButton('Tap Me', (400, 200, 100, 100), lambda: print('hello'))   # <--------- some sps object
+sps.pict()                                                              # <--------- pygame.display.flip() can't show sps objects without it
+pygame.display.flip()                                                   # <--------- now let's call .flip()
+```
+These 4 items are necessary to get normal behavior of sps. After you have cared about that you can use all fetures of sps freely
 
+### The quick start
+<a name = "the-quick-start"></a>
+There is a minimal starting code you can extend:
+```
+import pygame, simple_panels as sps
+pygame.init()
 
+DISPLAY_SIZE = (1600, 900)
+FPS = 60
+clock = pygame.time.Clock()
 
+screen = pygame.display.set_mode(DISPLAY_SIZE)
+sps.select_display(screen)
+
+while True:
+    screen.fill((0, 0, 0))
+    events = pygame.event.get()
+    sps.handle(events)
+    for event in events:
+        if event.type == pygame.QUIT:
+            exit()
+        #   Some your handling
+    #   Some your code
+    sps.pict()
+    sps.update()
+    clock.tick(FPS)
+```
 
 
 
