@@ -28,7 +28,7 @@ STANDART_SLASHING_INTENSITY = 4
 
 
 
-class Animation(StrEnum):
+class Animation(StrEnum):   # This class created for using it's attributes as arguments in press_animation and release_animation parameters by the user
     NO_ANIMATION = 'NO_ANIMATION'
     LINEAR = 'LINEAR'
     EASE = 'EASE'
@@ -36,7 +36,7 @@ class Animation(StrEnum):
 
 
 
-class Function():
+class Function():   # Translator from Animation() arguments passed my the user to functions performing these animations
     class Button:
         In = {'NO_ANIMATION': None, 'LINEAR': lambda x: x, 'EASE': lambda x: math.pow(x, STANDART_INTENSITY), 'SLASHING_EASE': lambda x: math.pow(x, STANDART_SLASHING_INTENSITY)}
         Out = {'NO_ANIMATION': None, 'LINEAR': lambda x: 1 - x, 'EASE': lambda x: 1 - math.pow(1 - x, STANDART_INTENSITY), 'SLASHING_EASE': lambda x: 1 - math.pow(1 - x, STANDART_SLASHING_INTENSITY)}
@@ -473,7 +473,6 @@ class TapButton:
         elif self.current_phase == 0 or (self.press_animation_function is None and self.current_phase < 0) or (self.release_animation_function is None and self.current_phase > 0):
             display.blit(self.surface_downed, (self.rect[0], self.rect[1]))
         elif self.current_phase < 0:
-            print(self.current_phase)
             current_surface = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
             pygame.draw.rect(current_surface, get_intermediate_color(self.color_not_downed, self.color_downed, self.press_animation_function(1 + self.current_phase / self.phases)), (0, 0, self.rect[2], self.rect[3]), border_radius = self.border_radius)
             pygame.draw.rect(current_surface, self.edges_color, (0, 0, self.rect[2], self.rect[3]), STANDART_BUTTON_BORDER_WIDTH, self.border_radius)
@@ -481,7 +480,6 @@ class TapButton:
             current_surface.blit(note, ((io := current_surface.get_size())[0] / 2 - (io0 := note.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
             display.blit(current_surface, (self.rect[0], self.rect[1]))
         elif self.current_phase > 0:
-            print(self.current_phase)
             current_surface = pygame.surface.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
             pygame.draw.rect(current_surface, (get_intermediate_color(self.color_downed, self.color_not_downed, self.release_animation_function(self.current_phase / self.phases))), (0, 0, self.rect[0], self.rect[1]), border_radius = self.border_radius)
             pygame.draw.rect(current_surface, self.edges_color, (0, 0, self.rect[2], self.rect[3]), STANDART_BUTTON_BORDER_WIDTH, self.border_radius)
@@ -489,15 +487,13 @@ class TapButton:
             current_surface.blit(note, ((io := current_surface.get_size())[0] / 2 - (io0 := note.get_size())[0] / 2, io[1] / 2 - io0[1] / 2))
             display.blit(current_surface, (self.rect[0], self.rect[1]))
 
-    def handle_some_click(self, event: pygame.event.Event):
+    def handle_some_click(self, event: pygame.event.Event):   # The subsidiary function for the global function handle() that call it
         if is_in(event.pos, self.rect):
-        ###    self.is_downed = not self.is_downed
             self.current_phase = -self.phases
             self.animation_playing = True
             self.function()
     
-    def update(self):
-        #   self.is_downed = False
+    def update(self):   # The subsidiary function for the global function update() that call it
         if self.current_phase == self.phases:
             self.current_phase = None
             self.animation_playing = False
