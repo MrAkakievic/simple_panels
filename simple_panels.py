@@ -14,7 +14,7 @@ performed   --->   3). To deal with animation_time so make that color changed gr
 
 import pygame, types, math
 from typing import Union
-from enum import Enum, StrEnum
+from enum import StrEnum
 pygame.init()
 
 
@@ -342,6 +342,12 @@ class Nummer:   # The panel fixed on a some place that shows some text when user
 
 
 class RelateSlider:   # The type of slider in which the value it represents varyes between tips-values, and middle points-values are between that two tip values. Like here: *1* 2 3 4 *5* when 1 pinned as a start point and 5 pinned as an end point
+    instances = []
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+        cls.instances.append(instance)
+        return instance
+    
     def __init__(self, dependent_variable_as_list: list, coordinates: tuple | list, min_value: int | float, max_value: int | float, k_steps: int, live_level: int, design = DEFAUL_SLIDER_DESING):   # dependent_variable_as_list is a list of 1 element   # live_level is a point where the slider on is in the start of a simulation
         if not isinstance(min_value, (int, float)):
             raise TypeError(f'Int or float type was expected, but {type(min_value)} had passed')
@@ -516,3 +522,9 @@ def handle(all_events: tuple | list):   # Must be called for every event causing
 def update():   # Serves all processes simple_panels must handle each tick of the main loop. MUST be called for every pygame.time.Clock().tick(...) tick in the main loop in that program using simple_panels
     for tapbutton in TapButton.instances:
         tapbutton.update()
+
+def pict():
+    for UI_obj in TapButton.instances:
+        UI_obj.pict()
+    for UI_obj in RelateSlider.instances:
+        UI_obj.pict()
