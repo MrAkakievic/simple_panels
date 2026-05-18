@@ -1,33 +1,40 @@
 # SIMPLE_PANELS
 
-## About
 <a name = "about-anchor"></a>
+## About
 This python library designed for embedding intuitive buttons, sliders, windows and other types of interactive elements with basic customization and functionality features into pygame projects
 
 Tags: python, pygame, UI, simplify
 
-## Table of content
 <a name = "table-of-content-anchor"></a>
+## Table of content
 - [About](#about-anchor)
 - [Table of content](#table-of-content-anchor)
 - [Features](#features-anchor)
 - [Installation & Connection](#installation-and-connection-anchor)
 - [Documentation](#documentation-anchor)
+  - [Examples](#examples)
   - [The necessary items you should embed before consuming simple_panels](#before-consuming)
   - [The quick start](#the-quick-start)
+  - [About UI elements](#about-UI-elements)
 
-## Features
 <a name = "features-anchor"></a>
+## Features
 - __ __ __
 
-## Installation & Connection
 <a name = "installation-and-connection-anchor"></a>
+## Installation & Connection
 Unavaivable yet
 
-## Documentation
 <a name = "documentation-anchor"></a>
-### The necessary items you should embed before consuming simple_panels
+## Documentation
+<a name = examples></a>
+### Examples
+These are some examples of simple_panels usage. You can copy, past, play and try these examples. Don't forget to import simple_panels
+
+___ ___ ___ No examples yet
 <a name = "before-consuming"></a>
+### The necessary items you should embed before consuming simple_panels
 >[!NOTE]
 >The sps literal uses for represent simple_panels insted of simple_panels throughout the Documentation in the code. This is represents the tacit line "import simple_panels as sps" in the header of the code
 
@@ -88,8 +95,8 @@ pygame.display.flip()                                                   # <-----
 ```
 These 4 items are necessary to get normal behavior of sps. After you have cared about that you can use all fetures of sps freely
 
-### The quick start
 <a name = "the-quick-start"></a>
+### The quick start
 There is a minimal starting code you can extend:
 ```
 import pygame, simple_panels as sps
@@ -113,10 +120,55 @@ while True:
     #   Some your code
     sps.pict()
     sps.update()
+    pygame.display.flip()
     clock.tick(FPS)
 ```
+<a name = about-UI-elements></a>
+### About UI elements
+Here you can get how to create UI elements and how to use them
 
+To create a button for openers you should choose the type you want to utilize. There are 2 types of the button: TapButton and .... The difference is that TapButton is designes for triggering on the click but ... designed for tracking the hold of the button
+The difference in customization between 2 types is minimal: both require 3 necessary arguments: text, rect and function. To create TapButton use sps.TapButton() and to create ... use sps.....
 
+text is a parameter contains what the note will placed on your button
+
+rect is a position of your button on the display as (x, y, width, high) or [x, y, width, high]
+
+function is that module will executed each time the user click on the button. For ... it also be executed each tick the button hold down
+```
+def func():                      # Logic when button clicked
+    ...
+button = sps.TapButton('Tap Me', (100, 100, 100, 100), func)
+```
+the launchable code:
+```
+import pygame, simple_panels as sps
+pygame.init()
+
+DISPLAY_SIZE = (1600, 900)
+FPS = 60
+clock = pygame.time.Clock()
+
+screen = pygame.display.set_mode(DISPLAY_SIZE)
+sps.select_display(screen)
+
+def func():                                                      # <--- the code we added
+    ...                                                          # <--- the code we added
+button = sps.TapButton('Tap Me', (300, 300, 300, 200), func)     # <--- the code we added
+
+while True:
+    screen.fill((0, 0, 0))
+    events = pygame.event.get()
+    sps.handle(events)
+    for event in events:
+        if event.type == pygame.QUIT:
+            exit()
+    sps.pict()
+    sps.update()
+    pygame.display.flip()
+    clock.tick(FPS)
+```
+the result:
 
 
 
