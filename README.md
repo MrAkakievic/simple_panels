@@ -14,7 +14,7 @@ Tags: python, pygame, UI, simplify
 - [Installation & Connection](#installation-and-connection-anchor)
 - [Documentation](#documentation-anchor)
   - [Examples](#examples)
-  - [The necessary items you should embed before consuming simple_panels](#before-consuming)
+  - [The necessary items you should embed before utilizing simple_panels](#before-utilizing)
   - [The quick start](#the-quick-start)
   - [About UI elements](#about-UI-elements)
 
@@ -33,8 +33,8 @@ Unavaivable yet
 These are some examples of simple_panels usage. You can copy, past, play and try these examples. Don't forget to import simple_panels
 
 ___ ___ ___ No examples yet
-<a name = "before-consuming"></a>
-### The necessary items you should embed before consuming simple_panels
+<a name = "before-utilizing"></a>
+### The necessary items you should embed before utilizing simple_panels
 >[!NOTE]
 >The sps literal uses for represent simple_panels insted of simple_panels throughout the Documentation in the code. This is represents the tacit line "import simple_panels as sps" in the header of the code
 
