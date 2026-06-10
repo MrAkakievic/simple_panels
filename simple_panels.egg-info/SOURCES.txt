@@ -1,5 +1,8 @@
-README.md
 setup.py
+simple_panels/Untitled-1.py
+simple_panels/__init__.py
+simple_panels/simple_panels.py
+simple_panels/testing.py
 simple_panels.egg-info/PKG-INFO
 simple_panels.egg-info/SOURCES.txt
 simple_panels.egg-info/dependency_links.txt
