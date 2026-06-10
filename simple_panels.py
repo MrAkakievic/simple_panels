@@ -5,6 +5,7 @@
 performed   --->   3). To deal with animation_time so make that color changed gradually
 4). All simple_panels interactive objects should be not fixed ones, but should be remaked as movable ones that can be freely relocated. And they should be able to give theirselves as pygame.surface.Surface()
 5). Classes in design kits. Should be maked that in kits of design it would be able to design several designes for one type of interactive object like checklist with one type of design, sub-checklist with different one
+6). Nummer should suspend to be a class-class but should turn into class with instances. No only one nummer anymore but arbitrary quantity of nummers for different targets
 """
 
 import math
@@ -884,7 +885,7 @@ class TapButton:
                         ),
                     )
                 ),
-                (0, 0, self.rect[0], self.rect[1]),
+                (0, 0, self.rect[2], self.rect[3]),
                 border_radius=self.border_radius,
             )
             pygame.draw.rect(
