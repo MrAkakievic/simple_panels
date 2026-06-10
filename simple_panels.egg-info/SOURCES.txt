@@ -1,0 +1,6 @@
+README.md
+setup.py
+simple_panels.egg-info/PKG-INFO
+simple_panels.egg-info/SOURCES.txt
+simple_panels.egg-info/dependency_links.txt
+simple_panels.egg-info/top_level.txt
